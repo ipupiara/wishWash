@@ -4,27 +4,36 @@
 
 #include "TStatechart.h"
 
-TStatechart SWishWashStateChart;
-TStatechart* PWishWashStateChart;
-
 
 enum eEventTypes
 {
-	evCharEntered,
-	evF1Pressed,
-	evF2Pressed,
-	evAstPressed,
-	evNumPressed,
-	evTimeOutDurationTimer,
-	evSecondsTick,
-	evStartPressed,
-	evStopPressed,
-	evZeroSignalOK,
-	evAdcTick,
-	evTWIDataReceived,
-	evFatalError
+	evNone = 0,
+	evTPressed,
+	evTReleased,
+	evISwitchedOn,
+	evISwitchedOff,
+	ev53sSwitchedLow,
+	ev53sSwitchedHigh,
+	evTimerExpired,
+	evTimerTick,
+	evPotiValueChanged
 };
 
+// This defines and names the states the class has.
+// attention: sequence must be the same as in xaStates (below) !!!
+enum eStates
+{
+	eStateWishWash,
+	eStartState = eStateWishWash,
+	eStateIdle,
+	eStateTPressed,
+	eStateTReleased,
+	eStateIon,
+	eNumberOfStates
+};
+
+TStatechart SWishWashStateChart;
+TStatechart* PWishWashStateChart;
 
 typedef struct  {
 	int evType;
@@ -41,18 +50,13 @@ typedef struct  {
 } CWishWashEvent ;
 
 
-
+CWishWashEvent* getNextEvent(CWishWashEvent* pev);
 
 void startStateCharts();
 
-
 void stopStateCharts();
 
-
 bool processEvent(TStatechart* t,CWishWashEvent* ev);
-
-
-
 
 #endif
 

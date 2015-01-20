@@ -7,51 +7,25 @@
 
 
 #include <avr/io.h>
+#include <stddef.h>
 #include "StateClass.h"
 #include "hawaif.h"
 
-uint8_t  fatalErrorOccurred;
-CWishWashEvent ev;
-
-
-/*
-enum eEventTypes
-{
-	evNone = 0,
-	evTPressed,
-	evTReleased,
-	evISwitchedOn,
-	evISwitchedOff,
-	ev53sSwitchedLow,
-	ev53sSwitchedHigh,
-	evTimerExpired,
-	evTimerTick,
-	evPotiValueChanged
-} ;
-
-
-enum eStateTypes
-{
-	eStateIdle =1,
-	eStateTPressed,
-	eStateTReleased,
-	eStateIon
-};
-*/
+CWishWashEvent currentEvent;
 
 int main(void)
 {
+	CWishWashEvent* ev;
 	startStateCharts();
 	init();
 	
     while(1)
     {
 		enterIdleSleepMode();
-		if (fatalErrorOccurred) {     // do this with highest priority (at the beginning)
-			//			fatalErrorOccurred = 0;	  // once occurred state stays until restart/reset
-			ev.evType = evFatalError;
-			processEvent(&SWishWashStateChart,&ev);
+		ev=getNextEvent(&currentEvent);
+		if (ev != NULL) {
+			processEvent(PWishWashStateChart,ev);
 		}
-		
+
     }
 }

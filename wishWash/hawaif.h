@@ -9,7 +9,19 @@
 #ifndef HAWAIF_H_
 #define HAWAIF_H_
 
+int8_t  timerReachedEvent;
 
+int8_t  iLineOnEvent;
+
+int8_t   iLineOffEvent;
+
+int8_t   tPressedEvent;
+
+int8_t	 tReleasedEvent;
+
+int8_t   ev53sSwitchedHighEvent;
+
+int8_t   ev53sSwitchedLowEvent ;
 
 void enterIdleSleepMode();
 
@@ -26,6 +38,8 @@ void startADCPolling();
 void stopADDCPolling();
 
 void startTickTimer();
+
+int isILineOn();
 
 void init();
 

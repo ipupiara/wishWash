@@ -55,5 +55,16 @@ void startTickTimer()
 void init()
 {
 	startTickTimer();
+	timerReachedEvent = 0;
+	iLineOnEvent = 0;
+	iLineOffEvent = 0;
+	tPressedEvent = 0;
+	tReleasedEvent = 0;
+	ev53sSwitchedHighEvent = 0;
+	ev53sSwitchedLowEvent  = 0;
 }
 
+int isILineOn()
+{
+	return 1;
+}

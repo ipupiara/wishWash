@@ -15,21 +15,19 @@
 extern const uStInt uStIntHandlingDone;
 extern const uStInt uStIntNoMatch;
 
-CWishWashEvent* currentEvent;
 
+CWishWashEvent* pCurrentEvent;
 
-// This defines and names the states the class has.
-// attention: sequence must be the same as in xaStates (below)  !!!
-enum eStates
+CWishWashEvent* getNextEvent(CWishWashEvent* pev)
 {
-	eStateWishWash,
-	eStartState = eStateWishWash,
-	eStateIdle,
-	eStateTPressed,
-	eStateTReleased,
-	eStateIon,
-	eNumberOfStates
-};
+	CWishWashEvent* res = NULL;
+	if (timerReachedEvent ==  1) {
+		timerReachedEvent = 0;
+		pev->evType = evTimerExpired;
+		res = pev;
+	}
+	return res;
+}
 
 
 uStInt evWishWashChecker(void)
@@ -309,7 +307,7 @@ void stopStateCharts()
 
 bool processEvent(TStatechart* t,CWishWashEvent* ev)
 {
-	currentEvent = ev;
+	pCurrentEvent = ev;
 	return ProcessEvent(t);
 }
 
