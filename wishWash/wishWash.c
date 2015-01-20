@@ -7,7 +7,14 @@
 
 
 #include <avr/io.h>
+#include "StateClass.h"
+#include "hawaif.h"
 
+uint8_t  fatalErrorOccurred;
+CWishWashEvent ev;
+
+
+/*
 enum eEventTypes
 {
 	evNone = 0,
@@ -26,60 +33,25 @@ enum eEventTypes
 enum eStateTypes
 {
 	eStateIdle =1,
-	eStartStateWash,
-	eStateWishInterval
-} eStateType;
-
-
-void enterIdleSleepMode()
-{
-	MCUCR &= ~((1<<SM0) | (1<<SM1));  // select idle sleep mode
-	MCUCR |= (1<<SE) ;  // enter idle sleep mode
-	MCUCR &= ~(1<<SE);  // disable sleep mode after wake up
-}
-
-void switchRelay15()
-{
-
-}
-
-void switchRelay53s()
-{
-	
-}
-
-void setWashTimer()
-{
-	
-}
-
-void setWishTimer()
-{
-	
-}
-
-void startADCPolling()
-{
-	
-}
-
-void stopADDCPolling()
-{
-	
-}
-
-int8_t currentState;
-int8_t currentEvent;
+	eStateTPressed,
+	eStateTReleased,
+	eStateIon
+};
+*/
 
 int main(void)
 {
+	startStateCharts();
+	init();
+	
     while(1)
     {
+		enterIdleSleepMode();
+		if (fatalErrorOccurred) {     // do this with highest priority (at the beginning)
+			//			fatalErrorOccurred = 0;	  // once occurred state stays until restart/reset
+			ev.evType = evFatalError;
+			processEvent(&SWishWashStateChart,&ev);
+		}
 		
-        //TODO:: Please write your application code 
-		
-		
-		
-
     }
 }
