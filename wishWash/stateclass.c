@@ -16,7 +16,7 @@ extern const uStInt uStIntHandlingDone;
 extern const uStInt uStIntNoMatch;
 
 
-CWishWashEvent* pCurrentEvent;
+CWishWashEvent* currentEvent;
 
 CWishWashEvent* getNextEvent(CWishWashEvent* pev)
 {
@@ -24,6 +24,36 @@ CWishWashEvent* getNextEvent(CWishWashEvent* pev)
 	if (timerReachedEvent ==  1) {
 		timerReachedEvent = 0;
 		pev->evType = evTimerExpired;
+		res = pev;
+	}
+	if (iLineOnEvent ==  1) {
+		iLineOnEvent = 0;
+		pev->evType = evISwitchedOn;
+		res = pev;
+	}
+	if (iLineOffEvent ==  1) {
+		iLineOffEvent = 0;
+		pev->evType = evISwitchedOff;
+		res = pev;
+	}
+	if (tPressedEvent ==  1) {
+		tPressedEvent = 0;
+		pev->evType = evTPressed;
+		res = pev;
+	}
+	if (tReleasedEvent ==  1) {
+		tReleasedEvent = 0;
+		pev->evType = evTReleased;
+		res = pev;
+	}
+	if (ev53sSwitchedHighEvent ==  1) {
+		ev53sSwitchedHighEvent = 0;
+		pev->evType = ev53sSwitchedHigh;
+		res = pev;
+	}
+	if (ev53sSwitchedLowEvent ==  1) {
+		ev53sSwitchedLowEvent = 0;
+		pev->evType = ev53sSwitchedLow;
 		res = pev;
 	}
 	return res;
@@ -49,36 +79,29 @@ void exitIdleState(void)
 uStInt evIdleChecker(void)
 {
 	uStInt res = uStIntNoMatch;
-//	printf("check for event in State evStateIdle\n");
 
-/*	if (currentEvent->evType == evTimeOutDurationTimer) 
+	if (currentEvent->evType == ev53sSwitchedLow) 
 	{	
-			BEGIN_EVENT_HANDLER(PJoesTriacStateChart, eStateTriacIdle);
+//			BEGIN_EVENT_HANDLER(PJoesTriacStateChart, eStateTriacIdle);
 				// No event action.
-			END_EVENT_HANDLER(PJoesTriacStateChart);
+			switchRelay53s();	
+//			END_EVENT_HANDLER(PJoesTriacStateChart);
 			res =  uStIntHandlingDone;
 	}
-	if ((currentEvent->evType == evAstPressed) || (currentEvent->evType == evStartPressed))
+	if (currentEvent->evType == evTPressed)
 	{	
-			BEGIN_EVENT_HANDLER(PJoesTriacStateChart, eStateCalibrating);
+			BEGIN_EVENT_HANDLER(PWishWashStateChart, eStateTPressed);
 				// No event action.
-			END_EVENT_HANDLER(PJoesTriacStateChart);
+			END_EVENT_HANDLER(PWishWashStateChart);
 			res =  uStIntHandlingDone;
 	}
-	if (currentEvent->evType == evF1Pressed) 
+	if (currentEvent->evType == evISwitchedOn) 
 	{	
-			BEGIN_EVENT_HANDLER(PJoesTriacStateChart, eStateChangeCalibVars);
+			BEGIN_EVENT_HANDLER(PWishWashStateChart, eStateIon);
 				// No event action.
-			END_EVENT_HANDLER(PJoesTriacStateChart);
+			END_EVENT_HANDLER(PWishWashStateChart);
 			res =  uStIntHandlingDone;
 	}
-	if (currentEvent->evType == evSecondsTick) 
-	{	
-		displayCountDown();		
-		res =  uStIntHandlingDone;
-//		debugEvent1Triggered = 1;
-	}
-	*/
 	
 	return (res); 
 }
@@ -307,7 +330,7 @@ void stopStateCharts()
 
 bool processEvent(TStatechart* t,CWishWashEvent* ev)
 {
-	pCurrentEvent = ev;
+	currentEvent = ev;
 	return ProcessEvent(t);
 }
 

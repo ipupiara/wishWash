@@ -11,7 +11,7 @@
 #include "StateClass.h"
 #include "hawaif.h"
 
-CWishWashEvent currentEvent;
+CWishWashEvent curEvent;
 
 int main(void)
 {
@@ -22,7 +22,7 @@ int main(void)
     while(1)
     {
 		enterIdleSleepMode();
-		ev=getNextEvent(&currentEvent);
+		ev=getNextEvent(&curEvent);
 		if (ev != NULL) {
 			processEvent(PWishWashStateChart,ev);
 		}
