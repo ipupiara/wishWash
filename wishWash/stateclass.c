@@ -18,6 +18,8 @@ extern const uStInt uStIntNoMatch;
 
 CWishWashEvent* currentEvent;
 
+int8_t wishCounter;
+
 CWishWashEvent* getNextEvent(CWishWashEvent* pev)
 {
 	CWishWashEvent* res = NULL;
@@ -56,10 +58,6 @@ CWishWashEvent* getNextEvent(CWishWashEvent* pev)
 		pev->evType = ev53sSwitchedLow;
 		res = pev;
 	}
-	if (counterReachedEvent ==  1) {
-		counterReachedEvent = 0;
-		pev->evType = evCounterReached;
-	}
 	return res;
 }
 
@@ -72,6 +70,7 @@ uStInt evWishWashChecker(void)
 
 void entryIdleState(void)
 {
+	switchRelay53s();
 	if(isTLineOn()) {
 		tPressedEvent = 1;
 	} else if (isILineOn()) {
@@ -141,13 +140,12 @@ uStInt evTPressedChecker(void)
 
 void entryTReleasedState(void)
 {
-
+	wishCounter = 0;
 }
 
 void exitTReleasedState(void)
 {
-//	printf("exit calib\n");
-//	stopDurationTimer();
+
 }
 
 uStInt evTReleasedChecker(void)
@@ -156,11 +154,15 @@ uStInt evTReleasedChecker(void)
 	
 	res = uStIntNoMatch;
 
-	if (currentEvent->evType == evCounterReached)  {	
+	if (currentEvent->evType == ev53sSwitchedLow)  {	
+		wishCounter --;
+		if ( wishCounter <= 0 )
+		{
 			BEGIN_EVENT_HANDLER(PWishWashStateChart, eStateIdle);
 				// No event action.
 			END_EVENT_HANDLER(PWishWashStateChart);
 			res =  uStIntHandlingDone;
+		}
 	}	
 	
 	return res;
@@ -168,46 +170,46 @@ uStInt evTReleasedChecker(void)
 
 void entryIonState(void)
 {
-
+	startADCPolling();
+	switchRelay15();
 }
 
 void exitIonState(void)
 {
 //	printf("exit I\n");
+	stopADDCPolling();
 }
 
 uStInt evIonChecker(void)
 {
 //	printf("check for event in State evStateIdle\n");
 	uStInt res = uStIntNoMatch;
-/*
-	if (currentEvent->evType == evNumPressed) 
-	{	
-		BEGIN_EVENT_HANDLER(PJoesTriacStateChart, eStateCalibrateZeroSignal);
-		// No event action.
-		
-		storeAmpsInputPin(avg);
 
-		END_EVENT_HANDLER(PJoesTriacStateChart);
-		res =  uStIntHandlingDone;		
-	}
-
-	if (currentEvent->evType == evAstPressed) 
+	if ((currentEvent->evType == evTPressed) || (currentEvent->evType == evISwitchedOff))
 	{	
-		BEGIN_EVENT_HANDLER(PJoesTriacStateChart, eStateCalibrateZeroSignal);
+		BEGIN_EVENT_HANDLER(PWishWashStateChart, eStateIdle);
 		// No event action.
 
-		storeAmpsInputPin(rms);
+		END_EVENT_HANDLER(PWishWashStateChart);
+		res =  uStIntHandlingDone;		
+	}
 
-		END_EVENT_HANDLER(PJoesTriacStateChart);
-		res =  uStIntHandlingDone;		
-	}
-	if (currentEvent->evType == evSecondsTick) 
+	if (currentEvent->evType == ev53sSwitchedHigh) 
 	{	
-//		debugEvent1Triggered = 1;	
+		switchRelay53s();
 		res =  uStIntHandlingDone;		
 	}
-	*/
+	if (currentEvent->evType == ev53sSwitchedLow) 
+	{	
+		startPotiTimer();
+		res =  uStIntHandlingDone;		
+	}
+		if (currentEvent->evType == evTimerExpired)
+		{
+			stopPotiTimer();
+			switchRelay15();
+			res =  uStIntHandlingDone;
+		}
 	return (res);
 }
 

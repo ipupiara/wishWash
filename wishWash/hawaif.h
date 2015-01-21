@@ -16,22 +16,18 @@ int8_t   tPressedEvent;
 int8_t	 tReleasedEvent;
 int8_t   ev53sSwitchedHighEvent;
 int8_t   ev53sSwitchedLowEvent ;
-int8_t   counterReachedEvent;
 
 
 void switchRelay15();
 
 void switchRelay53s();
 
-void setWashTimer();
-
-void setWishTimer();
-
 void startADCPolling();
 
 void stopADDCPolling();
 
-void startTickTimer();
+void startPotiTimer();
+void stopPotiTimer();
 
 int isILineOn();
 int isTLineOn();
