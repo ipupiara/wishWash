@@ -15,7 +15,7 @@ enum eEventTypes
 	ev53sSwitchedLow,
 	ev53sSwitchedHigh,
 	evTimerExpired,
-	evTimerTick,
+	evCounterReached,
 	evPotiValueChanged
 };
 

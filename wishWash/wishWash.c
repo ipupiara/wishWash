@@ -21,7 +21,6 @@ int main(void)
 	
     while(1)
     {
-		enterIdleSleepMode();
 		ev=getNextEvent(&curEvent);
 		if (ev != NULL) {
 			processEvent(PWishWashStateChart,ev);

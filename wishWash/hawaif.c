@@ -8,23 +8,19 @@
 #include <avr/io.h>
 #include "hawaif.h"
 
-
-void enterIdleSleepMode()
-{
-	MCUCR &= ~((1<<SM0) | (1<<SM1));  // select idle sleep mode
-	MCUCR |= (1<<SE) ;  // enter idle sleep mode
-	MCUCR &= ~(1<<SE);  // disable sleep mode after wake up
-}
+#define RELAYPIN   PB2
+#define ILINEPIN   PB1
+#define TLINEPIN   PB0
 
 
 void switchRelay15()
 {
-
+	PORTB &=  ~(1<< RELAYPIN);
 }
 
 void switchRelay53s()
 {
-	
+	PORTB |=  (1<< RELAYPIN);
 }
 
 void setWashTimer()
@@ -62,9 +58,18 @@ void init()
 	tReleasedEvent = 0;
 	ev53sSwitchedHighEvent = 0;
 	ev53sSwitchedLowEvent  = 0;
+	counterReachedEvent = 0;
 }
 
 int isILineOn()
 {
-	return 1;
+	int8_t res = (PORTB & (1 << ILINEPIN)) != 0;
+	return res;
+}
+
+
+int isTLineOn()
+{
+		int8_t res = (PORTB & (1 << TLINEPIN)) != 0;
+		return res;
 }

@@ -56,6 +56,10 @@ CWishWashEvent* getNextEvent(CWishWashEvent* pev)
 		pev->evType = ev53sSwitchedLow;
 		res = pev;
 	}
+	if (counterReachedEvent ==  1) {
+		counterReachedEvent = 0;
+		pev->evType = evCounterReached;
+	}
 	return res;
 }
 
@@ -68,7 +72,11 @@ uStInt evWishWashChecker(void)
 
 void entryIdleState(void)
 {
-
+	if(isTLineOn()) {
+		tPressedEvent = 1;
+	} else if (isILineOn()) {
+		iLineOnEvent = 1;		
+	}
 }
 
 void exitIdleState(void)
@@ -102,13 +110,12 @@ uStInt evIdleChecker(void)
 			END_EVENT_HANDLER(PWishWashStateChart);
 			res =  uStIntHandlingDone;
 	}
-	
 	return (res); 
 }
 
 void entryTPressedState(void)
 {
-
+	switchRelay15();
 }
 
 
@@ -120,63 +127,15 @@ void exitTPressedState(void)
 uStInt evTPressedChecker(void)
 {
 	uStInt res = uStIntNoMatch;
-//	printf("check for event in State evStateIdle\n");
 
-/*
-	if ((currentEvent->evType == evAstPressed) || (currentEvent->evType == evNumPressed)){
-		if (currentEvent->evType == evNumPressed)  {
-			if (calibVarInd == 0) {
-				calibLowADC = currentVarVal;
-				saveCalibLowADC();
-			}
-			if (calibVarInd == 1) {
-				calibHighADC = currentVarVal;
-				saveCalibHighADC();
-			} 
-		}
+	if (currentEvent->evType == evTReleased){
+	
+		BEGIN_EVENT_HANDLER(PWishWashStateChart, eStateTReleased);
+			// No event action.
+		END_EVENT_HANDLER(PWishWashStateChart);
 
-		if (calibVarInd == 1)   {	
-			BEGIN_EVENT_HANDLER(PJoesTriacStateChart, eStateTriacIdle);
-				// No event action.
-			END_EVENT_HANDLER(PJoesTriacStateChart);
-			res =  uStIntHandlingDone;
-		}
-		if (calibVarInd == 0) {
-			currentVarVal = calibHighADC;
-			currentTitle = "calibHighADC";
-			calibVarInd = 1;
-			displayCurrentVar();
-		}
 		res =  uStIntHandlingDone;
 	}
-
-	if (currentEvent->evType == evCharEntered) {
-		switch (currentEvent->evData.keyCode) {
-			case kp1 : 
-				currentVarVal++;
-				break;
-			case kp2 :
-				currentVarVal += 10;
-				break ;	
-			case kp3 :
-				currentVarVal += 100;
-				break ;		
-			case kp7 : 
-				currentVarVal--;
-				break;
-			case kp8 :
-				currentVarVal -= 10;
-				break ;	
-			case kp9 :
-				currentVarVal -= 100;
-				break ;									
-		}
-		if (currentVarVal < 0) currentVarVal = 0;
-		if (currentVarVal > 1023) currentVarVal = 1023;
-		currentVarChanged();
-		res =  uStIntHandlingDone;
-	}
-	*/
 	return (res); 
 }
 
@@ -196,15 +155,14 @@ uStInt evTReleasedChecker(void)
 	int8_t res;
 	
 	res = uStIntNoMatch;
-/*
-//	printf("inside evCalibratingChecker\n");
-	if (currentEvent->evType == evStopPressed)  {	
-			BEGIN_EVENT_HANDLER(PJoesTriacStateChart, eStateTriacIdle);
+
+	if (currentEvent->evType == evCounterReached)  {	
+			BEGIN_EVENT_HANDLER(PWishWashStateChart, eStateIdle);
 				// No event action.
-			END_EVENT_HANDLER(PJoesTriacStateChart);
+			END_EVENT_HANDLER(PWishWashStateChart);
 			res =  uStIntHandlingDone;
 	}	
-	*/
+	
 	return res;
 }
 
@@ -328,10 +286,10 @@ void stopStateCharts()
 }
 
 
-bool processEvent(TStatechart* t,CWishWashEvent* ev)
+bool processEvent(TStatechart* ts,CWishWashEvent* ev)
 {
 	currentEvent = ev;
-	return ProcessEvent(t);
+	return ProcessEvent(ts);
 }
 
 

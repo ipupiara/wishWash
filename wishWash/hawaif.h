@@ -10,20 +10,14 @@
 #define HAWAIF_H_
 
 int8_t  timerReachedEvent;
-
 int8_t  iLineOnEvent;
-
 int8_t   iLineOffEvent;
-
 int8_t   tPressedEvent;
-
 int8_t	 tReleasedEvent;
-
 int8_t   ev53sSwitchedHighEvent;
-
 int8_t   ev53sSwitchedLowEvent ;
+int8_t   counterReachedEvent;
 
-void enterIdleSleepMode();
 
 void switchRelay15();
 
@@ -40,6 +34,7 @@ void stopADDCPolling();
 void startTickTimer();
 
 int isILineOn();
+int isTLineOn();
 
 void init();
 
