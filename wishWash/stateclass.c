@@ -154,9 +154,9 @@ uStInt evTReleasedChecker(void)
 	
 	res = uStIntNoMatch;
 
-	if (currentEvent->evType == ev53sSwitchedLow)  {	
-		wishCounter --;
-		if ( wishCounter <= 0 )
+	if (currentEvent->evType == ev53sSwitchedHigh)  {	
+		wishCounter ++;
+		if ( wishCounter >= 3 )
 		{
 			BEGIN_EVENT_HANDLER(PWishWashStateChart, eStateIdle);
 				// No event action.
