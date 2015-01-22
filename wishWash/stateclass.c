@@ -9,9 +9,6 @@
 #include "StateClass.h"
 #include "hawaif.h"
 
-//#include "TriacDefines.h"
-
-
 extern const uStInt uStIntHandlingDone;
 extern const uStInt uStIntNoMatch;
 

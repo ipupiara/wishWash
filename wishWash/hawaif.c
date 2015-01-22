@@ -73,11 +73,11 @@ ISR(ADC_vect)
 	if (lastADCVal < 0X0300) {
 		ticksNeeded = (uint16_t) (FACTORLOW * lastADCVal);
 	} else {
-		ticksNeeded = 60 +  (uint16_t) (FACTORHIGH * lastADCVal);
+		ticksNeeded = 60 +  (uint16_t) (FACTORHIGH * (lastADCVal - 0x300));
 	} 
 	
 //	startTimer();  // used during debugging
-	// call pid and set next correction done asynchronously in main tread
+
 }
 
 
