@@ -177,7 +177,7 @@ void entryIonState(void)
 void exitIonState(void)
 {
 //	printf("exit I\n");
-	stopADDCPolling();
+	stopADCPolling();
 }
 
 uStInt evIonChecker(void)
@@ -201,12 +201,12 @@ uStInt evIonChecker(void)
 	}
 	if (currentEvent->evType == ev53sSwitchedLow) 
 	{	
-		startPotiTimer();
+		startITimer();
 		res =  uStIntHandlingDone;		
 	}
 		if (currentEvent->evType == evTimerExpired)
 		{
-			stopPotiTimer();
+			stopITimer();
 			switchRelay15();
 			res =  uStIntHandlingDone;
 		}

@@ -24,10 +24,10 @@ void switchRelay53s();
 
 void startADCPolling();
 
-void stopADDCPolling();
+void stopADCPolling();
 
-void startPotiTimer();
-void stopPotiTimer();
+void startITimer();
+void stopITimer();
 
 int isILineOn();
 int isTLineOn();
