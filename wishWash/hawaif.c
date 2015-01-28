@@ -13,8 +13,8 @@
 #include "hawaif.h"
 
 #define RELAYPIN   PB2
-#define ILINEPIN   PB1
-#define TLINEPIN   PB0     //  these 3 need to be pb0 .. pb2   !
+#define INDIALINEPIN   PB1
+#define TANGOLINEPIN   PB0     //  these 3 need to be pb0 .. pb2   !
 							// pb3 is adc3 analog input, hardcoded due to need to set admux 
 #define RELAYSWITCH	 PB4	// pb4 is relay switch
 
@@ -44,16 +44,16 @@ void switchRelay53s()
 
 ISR(PCINT0_vect)
 {
-	int8_t newLinePin =  (PINB & (1<< ILINEPIN));
-	int8_t oldLinePin =  (lastPinB  & (1<< ILINEPIN));
+	int8_t newLinePin =  (PINB & (1<< INDIALINEPIN));
+	int8_t oldLinePin =  (lastPinB  & (1<< INDIALINEPIN));
 	if ( newLinePin & (~oldLinePin) ) {
 		iLineOnEvent = 1;
 	}
 	if ( (~newLinePin) & oldLinePin ) {
 		iLineOffEvent = 1;
 	}
-	newLinePin =  (PINB & (1<< TLINEPIN));
-	oldLinePin =  (lastPinB  & (1<< TLINEPIN));
+	newLinePin =  (PINB & (1<< TANGOLINEPIN));
+	oldLinePin =  (lastPinB  & (1<< TANGOLINEPIN));
 	if ( newLinePin & (~oldLinePin) ) {
 		tPressedEvent = 1;
 	}
@@ -168,14 +168,14 @@ void initHW()
 
 int isIndiaLineOn()
 {
-	int8_t res = (PINB & (1 << ILINEPIN)) != 0;
+	int8_t res = (PINB & (1 << INDIALINEPIN)) != 0;
 	return res;
 }
 
 
 int isTangoLineOn()
 {
-		int8_t res = (PINB & (1 << TLINEPIN)) != 0;
+		int8_t res = (PINB & (1 << TANGOLINEPIN)) != 0;
 		return res;
 }
 
