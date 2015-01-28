@@ -68,9 +68,9 @@ uStInt evWishWashChecker(void)
 void entryIdleState(void)
 {
 	switchRelay53s();
-	if(isTLineOn()) {
+	if(isTangoLineOn()) {
 		tPressedEvent = 1;
-	} else if (isILineOn()) {
+	} else if (isIndiaLineOn()) {
 		iLineOnEvent = 1;		
 	}
 }
@@ -198,15 +198,15 @@ uStInt evIonChecker(void)
 	}
 	if (currentEvent->evType == ev53sSwitchedLow) 
 	{	
-		startITimer();
+		startIntervalTimer();
 		res =  uStIntHandlingDone;		
 	}
-		if (currentEvent->evType == evTimerExpired)
-		{
-			stopITimer();
-			switchRelay15();
-			res =  uStIntHandlingDone;
-		}
+	if (currentEvent->evType == evTimerExpired)
+	{
+		stopIntervalTimer();
+		switchRelay15();
+		res =  uStIntHandlingDone;
+	}
 	return (res);
 }
 

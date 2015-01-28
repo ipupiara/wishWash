@@ -14,7 +14,11 @@
 
 #define RELAYPIN   PB2
 #define ILINEPIN   PB1
-#define TLINEPIN   PB0
+#define TLINEPIN   PB0     //  these 3 need to be pb0 .. pb2   !
+							// pb3 is adc3 analog input, hardcoded due to need to set admux 
+#define RELAYSWITCH	 PB4	// pb4 is relay switch
+
+
 #define PINMASK  ((1<<PB0) | (1<< PB1) | (1<<PB2))
 // PB3 used as ADC3
 #define FACTORLOW  0.078125
@@ -29,12 +33,12 @@ int8_t  lastPinB;
 
 void switchRelay15()
 {
-	PORTB &=  ~(1<< RELAYPIN);
+	PORTB &=  ~(1<< RELAYSWITCH);
 }
 
 void switchRelay53s()
 {
-	PORTB |=  (1<< RELAYPIN);
+	PORTB |=  (1<< RELAYSWITCH);
 }
 
 
@@ -87,7 +91,7 @@ ISR(TIMER1_COMPA_vect)
 	++tickCnt;
 	if (tickCnt > ticksNeeded) {
 		timerReachedEvent = 1;
-	}  else {
+	}  else {    // tobe reviewed 
 	//	stopTimer();
 		ADCSRA  |= (1<<ADSC);   // start one ADC cycle
 	}
@@ -131,17 +135,17 @@ void startADCPolling()
 		sei();
 }
 
-void startITimer()
+void startIntervalTimer()
 {
 	startADCPolling();
 }
 
-void stopITimer()
+void stopIntervalTimer()
 {
 	stopADCPolling();
 }
 
-void init()
+void initHW()
 {
 	timerReachedEvent = 0;
 	iLineOnEvent = 0;
@@ -157,17 +161,28 @@ void init()
 	PCMSK |= ((1 << PCINT0) |  (1 << PCINT1) | (1 << PCINT2));
 	GIMSK |= (1 << PCIE);
 	lastPinB = PINB;
+		
+	PORTB &= ~(1<<RELAYSWITCH);  // switch relay off to default = forward line coming from wish-motor
+	DDRB |= (1<<RELAYSWITCH);   // output
 }
 
-int isILineOn()
+int isIndiaLineOn()
 {
 	int8_t res = (PINB & (1 << ILINEPIN)) != 0;
 	return res;
 }
 
 
-int isTLineOn()
+int isTangoLineOn()
 {
 		int8_t res = (PINB & (1 << TLINEPIN)) != 0;
 		return res;
+}
+
+
+void enterIdleSleepMode()
+{
+	MCUCR &= ~((1<<SM0) | (1<<SM1)); // select idle sleep mode
+	MCUCR |= (1<<SE) ; // enter idle sleep mode
+	MCUCR &= ~(1<<SE); // disable sleep mode after wake up
 }

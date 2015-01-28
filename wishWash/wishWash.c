@@ -17,7 +17,7 @@ int main(void)
 {
 	CWishWashEvent* ev;
 	startStateCharts();
-	init();
+	initHW();
 	
     while(1)
     {

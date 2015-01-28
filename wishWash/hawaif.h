@@ -26,13 +26,15 @@ void startADCPolling();
 
 void stopADCPolling();
 
-void startITimer();
-void stopITimer();
+void startIntervalTimer();
+void stopIntervalTimer();
 
-int isILineOn();
-int isTLineOn();
+int isTangoLineOn();
+int isIndiaLineOn();
 
-void init();
+void initHW();
+
+void enterIdleSleepMode();
 
 
 
