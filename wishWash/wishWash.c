@@ -16,14 +16,14 @@ CWishWashEvent curEvent;
 int main(void)
 {
 	CWishWashEvent* ev;
-	startStateCharts();
+//	startStateCharts();
 	initHW();
 	
     while(1)
     {
 		ev=getNextEvent(&curEvent);
 		if (ev != NULL) {
-			processEvent(PWishWashStateChart,ev);
+//			processEvent(PWishWashStateChart,ev);
 		}
 
     }

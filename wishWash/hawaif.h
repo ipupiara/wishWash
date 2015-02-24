@@ -10,17 +10,17 @@
 #define HAWAIF_H_
 
 int8_t  timerReachedEvent;
-int8_t  iLineOnEvent;
-int8_t   iLineOffEvent;
-int8_t   tPressedEvent;
-int8_t	 tReleasedEvent;
-int8_t   ev53sSwitchedHighEvent;
-int8_t   ev53sSwitchedLowEvent ;
+int8_t  indiaLineOnEvent;
+int8_t   indaLineOffEvent;
+int8_t   tangoPressedEvent;
+int8_t	 tangoReleasedEvent;
+int8_t   evMotorOutput53sSwitchedHighEvent;
+int8_t   evMotorOuput53sSwitchedLowEvent ;
 
 
-void switchRelay15();
+void switchRelayToPlusLine15();
 
-void switchRelay53s();
+void switchRelay53ToMoterOutput();
 
 void startADCPolling();
 

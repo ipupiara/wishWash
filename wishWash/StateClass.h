@@ -8,12 +8,12 @@
 enum eEventTypes
 {
 	evNone = 0,
-	evTPressed,
-	evTReleased,
-	evISwitchedOn,
-	evISwitchedOff,
-	ev53sSwitchedLow,
-	ev53sSwitchedHigh,
+	evTangoPressed,
+	evTangoReleased,
+	evIndiaSwitchedOn,
+	evIndiaSwitchedOff,
+	evMotorOutput53sSwitchedLow,
+	evMotorOutput53sSwitchedHigh,
 	evTimerExpired,
 	evPotiValueChanged
 };
@@ -25,9 +25,9 @@ enum eStates
 	eStateWishWash,
 	eStartState = eStateWishWash,
 	eStateIdle,
-	eStateTPressed,
-	eStateTReleased,
-	eStateIon,
+	eStateTangoPressed,
+	eStateTangoReleased,
+	eStateIndiaOn,
 	eNumberOfStates
 };
 

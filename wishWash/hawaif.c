@@ -21,8 +21,8 @@
 
 #define PINMASK  ((1<<PB0) | (1<< PB1) | (1<<PB2))
 // PB3 used as ADC3
-#define FACTORLOW  0.078125
-#define FACTORHIGH 0.2
+//#define FACTORLOW  0.078125
+//#define FACTORHIGH 0.2
 
 int16_t lastADCVal;
 uint16_t  tickCnt;
@@ -30,13 +30,15 @@ uint16_t  ticksNeeded;
 
 int8_t  lastPinB;
 
+int8_t timerStarted;
 
-void switchRelay15()
+
+void switchRelayToPlusLine15()
 {
 	PORTB &=  ~(1<< RELAYSWITCH);
 }
 
-void switchRelay53s()
+void switchRelay53ToMoterOutput()
 {
 	PORTB |=  (1<< RELAYSWITCH);
 }
@@ -47,26 +49,26 @@ ISR(PCINT0_vect)
 	int8_t newLinePin =  (PINB & (1<< INDIALINEPIN));
 	int8_t oldLinePin =  (lastPinB  & (1<< INDIALINEPIN));
 	if ( newLinePin & (~oldLinePin) ) {
-		iLineOnEvent = 1;
+		indiaLineOnEvent = 1;
 	}
 	if ( (~newLinePin) & oldLinePin ) {
-		iLineOffEvent = 1;
+		indaLineOffEvent = 1;
 	}
 	newLinePin =  (PINB & (1<< TANGOLINEPIN));
 	oldLinePin =  (lastPinB  & (1<< TANGOLINEPIN));
 	if ( newLinePin & (~oldLinePin) ) {
-		tPressedEvent = 1;
+		tangoPressedEvent = 1;
 	}
 	if ( (~newLinePin) & oldLinePin ) {
-		tReleasedEvent = 1;
+		tangoReleasedEvent = 1;
 	}
 	newLinePin =  (PINB  & (1<< RELAYPIN));
 	oldLinePin =  (lastPinB & (1<< RELAYPIN));
 	if ( newLinePin & (~oldLinePin) ) {
-		ev53sSwitchedHighEvent = 1;
+		evMotorOutput53sSwitchedHighEvent = 1;
 	}
 	if ( (~newLinePin) & oldLinePin ) {
-		ev53sSwitchedLowEvent = 1;
+		evMotorOuput53sSwitchedLowEvent = 1;
 	}
 	lastPinB = PINB;
 }
@@ -74,11 +76,12 @@ ISR(PCINT0_vect)
 ISR(ADC_vect)
 {
 	lastADCVal = ADC;
-	if (lastADCVal < 0X0300) {
-		ticksNeeded = (uint16_t) (FACTORLOW * lastADCVal);
-	} else {
-		ticksNeeded = 60 +  (uint16_t) (FACTORHIGH * (lastADCVal - 0x300));
-	} 
+	ticksNeeded = (lastADCVal >> 3);     // division by 8 means factor = 0.12 
+//	if (lastADCVal < 0X0300) {
+//		ticksNeeded = (uint16_t) (FACTORLOW * lastADCVal);
+//	} else {
+//		ticksNeeded = 60 +  (uint16_t) (FACTORHIGH * (lastADCVal - 0x300));
+//	} 
 	
 //	startTimer();  // used during debugging
 
@@ -91,7 +94,7 @@ ISR(TIMER1_COMPA_vect)
 	++tickCnt;
 	if (tickCnt > ticksNeeded) {
 		timerReachedEvent = 1;
-	}  else {    // tobe reviewed 
+	}  else {    // tobe reviewed (check keepTimersRunningIn... in project properties->TOOL )
 	//	stopTimer();
 		ADCSRA  |= (1<<ADSC);   // start one ADC cycle
 	}
@@ -113,10 +116,10 @@ void startADCPolling()
 		tickCnt = 0;
 		ticksNeeded = 20;   // 10 sec
 		TCCR1 = 1 << CTC1; 
-		OCR1A = 0xF4;  // counter top value, 0x2FF means approx   2 ADC measures per sec
+		OCR1A = 0xF4;  // counter top value means approx   2 ADC measures per sec
 		GTCCR = 0x00;
 		TIMSK  = 1 << OCIE1A;  //  interrupt needed for ADC trigger
-		TCNT1 = 0x0000 ;
+		TCNT1 = 0x00 ;
 
 		//  init ADC
 
@@ -137,34 +140,16 @@ void startADCPolling()
 
 void startIntervalTimer()
 {
-	startADCPolling();
+	timerStarted = 1;
+//	startADCPolling();
 }
 
 void stopIntervalTimer()
 {
-	stopADCPolling();
+	timerStarted = 0;
+//	stopADCPolling();
 }
 
-void initHW()
-{
-	timerReachedEvent = 0;
-	iLineOnEvent = 0;
-	iLineOffEvent = 0;
-	tPressedEvent = 0;
-	tReleasedEvent = 0;
-	ev53sSwitchedHighEvent = 0;
-	ev53sSwitchedLowEvent  = 0;
-	
-	// enable pcint0..2
-	DDRB  &= ~((1<DDB0) | (1<< DDB1) | (1<<DDB2)  );            // one could also use above pin defines here.. it is the same sequence
-	PORTB   &= ~((1<PB0) | (1<< PB1) | (1<<PB2)  );			// disable pullups
-	PCMSK |= ((1 << PCINT0) |  (1 << PCINT1) | (1 << PCINT2));
-	GIMSK |= (1 << PCIE);
-	lastPinB = PINB;
-		
-	PORTB &= ~(1<<RELAYSWITCH);  // switch relay off to default = forward line coming from wish-motor
-	DDRB |= (1<<RELAYSWITCH);   // output
-}
 
 int isIndiaLineOn()
 {
@@ -185,4 +170,28 @@ void enterIdleSleepMode()
 	MCUCR &= ~((1<<SM0) | (1<<SM1)); // select idle sleep mode
 	MCUCR |= (1<<SE) ; // enter idle sleep mode
 	MCUCR &= ~(1<<SE); // disable sleep mode after wake up
+}
+
+
+
+void initHW()
+{
+	timerStarted = 0;
+	timerReachedEvent = 0;
+	indiaLineOnEvent = 0;
+	indaLineOffEvent = 0;
+	tangoPressedEvent = 0;
+	tangoReleasedEvent = 0;
+	evMotorOutput53sSwitchedHighEvent = 0;
+	evMotorOuput53sSwitchedLowEvent  = 0;
+	
+	// enable pcint0..2
+	DDRB  &= ~((1<DDB0) | (1<< DDB1) | (1<<DDB2)  );            // one could also use above pin defines here.. it is the same sequence
+	PORTB   &= ~((1<PB0) | (1<< PB1) | (1<<PB2)  );			// disable pullups
+	PCMSK |= ((1 << PCINT0) |  (1 << PCINT1) | (1 << PCINT2));
+	GIMSK |= (1 << PCIE);
+	lastPinB = PINB;
+	
+	PORTB &= ~(1<<RELAYSWITCH);  // switch relay off to default = forward line coming from wish-motor
+	DDRB |= (1<<RELAYSWITCH);   // output
 }

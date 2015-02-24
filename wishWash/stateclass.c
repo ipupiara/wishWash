@@ -25,34 +25,34 @@ CWishWashEvent* getNextEvent(CWishWashEvent* pev)
 		pev->evType = evTimerExpired;
 		res = pev;
 	}
-	if (iLineOnEvent ==  1) {
-		iLineOnEvent = 0;
-		pev->evType = evISwitchedOn;
+	if (indiaLineOnEvent ==  1) {
+		indiaLineOnEvent = 0;
+		pev->evType = evIndiaSwitchedOn;
 		res = pev;
 	}
-	if (iLineOffEvent ==  1) {
-		iLineOffEvent = 0;
-		pev->evType = evISwitchedOff;
+	if (indaLineOffEvent ==  1) {
+		indaLineOffEvent = 0;
+		pev->evType = evIndiaSwitchedOff;
 		res = pev;
 	}
-	if (tPressedEvent ==  1) {
-		tPressedEvent = 0;
-		pev->evType = evTPressed;
+	if (tangoPressedEvent ==  1) {
+		tangoPressedEvent = 0;
+		pev->evType = evTangoPressed;
 		res = pev;
 	}
-	if (tReleasedEvent ==  1) {
-		tReleasedEvent = 0;
-		pev->evType = evTReleased;
+	if (tangoReleasedEvent ==  1) {
+		tangoReleasedEvent = 0;
+		pev->evType = evTangoReleased;
 		res = pev;
 	}
-	if (ev53sSwitchedHighEvent ==  1) {
-		ev53sSwitchedHighEvent = 0;
-		pev->evType = ev53sSwitchedHigh;
+	if (evMotorOutput53sSwitchedHighEvent ==  1) {
+		evMotorOutput53sSwitchedHighEvent = 0;
+		pev->evType = evMotorOutput53sSwitchedHigh;
 		res = pev;
 	}
-	if (ev53sSwitchedLowEvent ==  1) {
-		ev53sSwitchedLowEvent = 0;
-		pev->evType = ev53sSwitchedLow;
+	if (evMotorOuput53sSwitchedLowEvent ==  1) {
+		evMotorOuput53sSwitchedLowEvent = 0;
+		pev->evType = evMotorOutput53sSwitchedLow;
 		res = pev;
 	}
 	return res;
@@ -67,11 +67,11 @@ uStInt evWishWashChecker(void)
 
 void entryIdleState(void)
 {
-	switchRelay53s();
+	switchRelay53ToMoterOutput();
 	if(isTangoLineOn()) {
-		tPressedEvent = 1;
+		tangoPressedEvent = 1;
 	} else if (isIndiaLineOn()) {
-		iLineOnEvent = 1;		
+		indiaLineOnEvent = 1;		
 	}
 }
 
@@ -84,24 +84,24 @@ uStInt evIdleChecker(void)
 {
 	uStInt res = uStIntNoMatch;
 
-	if (currentEvent->evType == ev53sSwitchedLow) 
+	if (currentEvent->evType == evMotorOutput53sSwitchedLow) 
 	{	
 //			BEGIN_EVENT_HANDLER(PJoesTriacStateChart, eStateTriacIdle);
 				// No event action.
-			switchRelay53s();	
+			switchRelay53ToMoterOutput();	
 //			END_EVENT_HANDLER(PJoesTriacStateChart);
 			res =  uStIntHandlingDone;
 	}
-	if (currentEvent->evType == evTPressed)
+	if (currentEvent->evType == evTangoPressed)
 	{	
-			BEGIN_EVENT_HANDLER(PWishWashStateChart, eStateTPressed);
+			BEGIN_EVENT_HANDLER(PWishWashStateChart, eStateTangoPressed);
 				// No event action.
 			END_EVENT_HANDLER(PWishWashStateChart);
 			res =  uStIntHandlingDone;
 	}
-	if (currentEvent->evType == evISwitchedOn) 
+	if (currentEvent->evType == evIndiaSwitchedOn) 
 	{	
-			BEGIN_EVENT_HANDLER(PWishWashStateChart, eStateIon);
+			BEGIN_EVENT_HANDLER(PWishWashStateChart, eStateIndiaOn);
 				// No event action.
 			END_EVENT_HANDLER(PWishWashStateChart);
 			res =  uStIntHandlingDone;
@@ -109,24 +109,24 @@ uStInt evIdleChecker(void)
 	return (res); 
 }
 
-void entryTPressedState(void)
+void entryTangoPressedState(void)
 {
-	switchRelay15();
+	switchRelayToPlusLine15();
 }
 
 
 
-void exitTPressedState(void)
+void exitTangoPressedState(void)
 {
 }
 
-uStInt evTPressedChecker(void)
+uStInt evTangoPressedChecker(void)
 {
 	uStInt res = uStIntNoMatch;
 
-	if (currentEvent->evType == evTReleased){
+	if (currentEvent->evType == evTangoReleased){
 	
-		BEGIN_EVENT_HANDLER(PWishWashStateChart, eStateTReleased);
+		BEGIN_EVENT_HANDLER(PWishWashStateChart, eStateTangoReleased);
 			// No event action.
 		END_EVENT_HANDLER(PWishWashStateChart);
 
@@ -135,23 +135,23 @@ uStInt evTPressedChecker(void)
 	return (res); 
 }
 
-void entryTReleasedState(void)
+void entryTangoReleasedState(void)
 {
 	wishCounter = 0;
 }
 
-void exitTReleasedState(void)
+void exitTangoReleasedState(void)
 {
 
 }
 
-uStInt evTReleasedChecker(void)
+uStInt evTangoReleasedChecker(void)
 {
 	int8_t res;
 	
 	res = uStIntNoMatch;
 
-	if (currentEvent->evType == ev53sSwitchedHigh)  {	
+	if (currentEvent->evType == evMotorOutput53sSwitchedHigh)  {	
 		wishCounter ++;
 		if ( wishCounter >= 3 )
 		{
@@ -165,24 +165,26 @@ uStInt evTReleasedChecker(void)
 	return res;
 }
 
-void entryIonState(void)
+void entryIndiaOnState(void)
 {
 	startADCPolling();
-	switchRelay15();
+	switchRelayToPlusLine15();
+	stopIntervalTimer();
 }
 
-void exitIonState(void)
+void exitIndiaOnState(void)
 {
 //	printf("exit I\n");
 	stopADCPolling();
+	stopIntervalTimer();
 }
 
-uStInt evIonChecker(void)
+uStInt evIndiaOnChecker(void)
 {
 //	printf("check for event in State evStateIdle\n");
 	uStInt res = uStIntNoMatch;
 
-	if ((currentEvent->evType == evTPressed) || (currentEvent->evType == evISwitchedOff))
+	if ((currentEvent->evType == evTangoPressed) || (currentEvent->evType == evIndiaSwitchedOff))
 	{	
 		BEGIN_EVENT_HANDLER(PWishWashStateChart, eStateIdle);
 		// No event action.
@@ -190,13 +192,17 @@ uStInt evIonChecker(void)
 		END_EVENT_HANDLER(PWishWashStateChart);
 		res =  uStIntHandlingDone;		
 	}
+	if (currentEvent->evType == evPotiValueChanged)
+	{
+		res =  uStIntHandlingDone;
+	}
 
-	if (currentEvent->evType == ev53sSwitchedHigh) 
+	if (currentEvent->evType == evMotorOutput53sSwitchedHigh) 
 	{	
-		switchRelay53s();
+		switchRelay53ToMoterOutput();
 		res =  uStIntHandlingDone;		
 	}
-	if (currentEvent->evType == ev53sSwitchedLow) 
+	if (currentEvent->evType == evMotorOutput53sSwitchedLow) 
 	{	
 		startIntervalTimer();
 		res =  uStIntHandlingDone;		
@@ -204,7 +210,7 @@ uStInt evIonChecker(void)
 	if (currentEvent->evType == evTimerExpired)
 	{
 		stopIntervalTimer();
-		switchRelay15();
+		switchRelayToPlusLine15();
 		res =  uStIntHandlingDone;
 	}
 	return (res);
@@ -226,41 +232,50 @@ t_fvoid  tfNull;
 
 xStateType xaStates[eNumberOfStates] = {
  	{eStateWishWash,    // name
- 	-1,									//parent
- 	eStateIdle,    // default substate
- 	0,    // keep history
- 	evWishWashChecker,    // event checking fu
-	tfNull,       // def state entry function
- 	tfNull,     //    entering state
- 	tfNull},     // exiting state
+ 		-1,									//parent
+ 		eStateIdle,    // default substate
+ 		0,    // keep history
+ 		evWishWashChecker,    // event checking fu
+		tfNull,       // def state entry function
+ 		tfNull,     //    entering state
+ 		tfNull},     // exiting state
 
  	{eStateIdle,
- 	eStateWishWash,
- 	-1,
- 	0,									
- 	evIdleChecker,
- 	tfNull,
- 	entryIdleState,
- 	exitIdleState},
-
-
- 	{eStateTPressed,
- 	eStateWishWash,
- 	-1,
- 	0,									
- 	evTPressedChecker,
- 	tfNull,
- 	entryTPressedState,
- 	exitTPressedState},
-
- 	{eStateTReleased,
- 	eStateWishWash,
- 	-1,
- 	0,									
- 	evTReleasedChecker,
- 	tfNull,
- 	entryTReleasedState,
- 	exitTReleasedState} 	 
+ 		eStateWishWash,
+ 		-1,
+ 		0,
+ 		evIdleChecker,
+ 		tfNull,
+ 		entryIdleState,
+ 		exitIdleState
+	},
+ 	{eStateTangoPressed,
+ 		eStateWishWash,
+ 		-1,
+ 		0,
+ 		evTangoPressedChecker,
+ 		tfNull,
+ 		entryTangoPressedState,
+ 		exitTangoPressedState
+	},
+	{eStateTangoReleased,
+ 		eStateWishWash,
+ 		-1,
+ 		0,		 							
+ 		evTangoReleasedChecker,
+ 		tfNull,
+ 		entryTangoReleasedState,
+ 		exitTangoReleasedState
+	}, 	 
+	{eStateIndiaOn,
+		eStateWishWash,
+		-1,
+		0,
+		evIndiaOnChecker,
+		tfNull,
+		entryIndiaOnState,
+		exitIndiaOnState
+	} 
 };
 
 
