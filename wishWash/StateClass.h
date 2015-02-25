@@ -14,8 +14,7 @@ enum eEventTypes
 	evIndiaSwitchedOff,
 	evMotorOutput53sSwitchedLow,
 	evMotorOutput53sSwitchedHigh,
-	evTimerExpired,
-	evPotiValueChanged
+	evTimerExpired
 };
 
 // This defines and names the states the class has.

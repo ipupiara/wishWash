@@ -91,13 +91,15 @@ ISR(ADC_vect)
 ISR(TIMER1_COMPA_vect)
 {   
 	uint8_t   TIFRmask;
-	++tickCnt;
+	if (timerStarted) { ++tickCnt;}
+	cli();
 	if (tickCnt > ticksNeeded) {
 		timerReachedEvent = 1;
 	}  else {    // tobe reviewed (check keepTimersRunningIn... in project properties->TOOL )
 	//	stopTimer();
 		ADCSRA  |= (1<<ADSC);   // start one ADC cycle
 	}
+	sei();
 	TIFRmask = ~(1<< OCF1A);   //  for debugging
 	TIFR  &=  TIFRmask;  // during debugging found out, that it is better to do this
 }

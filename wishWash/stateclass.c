@@ -75,11 +75,6 @@ void entryIdleState(void)
 	}
 }
 
-void exitIdleState(void)
-{
-
-}
-
 uStInt evIdleChecker(void)
 {
 	uStInt res = uStIntNoMatch;
@@ -114,12 +109,6 @@ void entryTangoPressedState(void)
 	switchRelayToPlusLine15();
 }
 
-
-
-void exitTangoPressedState(void)
-{
-}
-
 uStInt evTangoPressedChecker(void)
 {
 	uStInt res = uStIntNoMatch;
@@ -138,11 +127,6 @@ uStInt evTangoPressedChecker(void)
 void entryTangoReleasedState(void)
 {
 	wishCounter = 0;
-}
-
-void exitTangoReleasedState(void)
-{
-
 }
 
 uStInt evTangoReleasedChecker(void)
@@ -192,11 +176,6 @@ uStInt evIndiaOnChecker(void)
 		END_EVENT_HANDLER(PWishWashStateChart);
 		res =  uStIntHandlingDone;		
 	}
-	if (currentEvent->evType == evPotiValueChanged)
-	{
-		res =  uStIntHandlingDone;
-	}
-
 	if (currentEvent->evType == evMotorOutput53sSwitchedHigh) 
 	{	
 		switchRelay53ToMoterOutput();
@@ -247,7 +226,7 @@ xStateType xaStates[eNumberOfStates] = {
  		evIdleChecker,
  		tfNull,
  		entryIdleState,
- 		exitIdleState
+ 		tfNull
 	},
  	{eStateTangoPressed,
  		eStateWishWash,
@@ -256,7 +235,7 @@ xStateType xaStates[eNumberOfStates] = {
  		evTangoPressedChecker,
  		tfNull,
  		entryTangoPressedState,
- 		exitTangoPressedState
+ 		tfNull
 	},
 	{eStateTangoReleased,
  		eStateWishWash,
@@ -265,7 +244,7 @@ xStateType xaStates[eNumberOfStates] = {
  		evTangoReleasedChecker,
  		tfNull,
  		entryTangoReleasedState,
- 		exitTangoReleasedState
+ 		tfNull
 	}, 	 
 	{eStateIndiaOn,
 		eStateWishWash,
