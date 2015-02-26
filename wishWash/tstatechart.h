@@ -33,7 +33,9 @@
 typedef  uint8_t uStInt;
 typedef  int8_t  stInt;
 
-#define maxDepth 12
+#define maxDepth 6
+
+//#define needHistory
 
 
 
@@ -41,8 +43,11 @@ typedef struct
 {
 	stInt	m_vi32Ancestry[maxDepth];
 	stInt  m_vi32AncestrySize;
-
+	
+#ifdef needHistory
 	stInt				m_stIntHistoryReturnState;
+#endif	
+
 } xInternalState;
 
 
@@ -58,7 +63,6 @@ typedef struct
 	stInt   m_keepHistory;
 
 	t_uStInt m_pfu32EventChecker;
-	t_fvoid  m_pfDefaultStateEntry; 
 	t_fvoid  m_pfEnteringState;
 	t_fvoid m_pfLeavingState;
 } xStateType;
@@ -122,7 +126,8 @@ void beginEventAction(TStatechart* t, uStInt u32DestStateAndFlags,
 void endEventAction(TStatechart* t, uStInt u32DestStateAndFlags,
 	uStInt u32LastStateExited);
 
+#ifdef needHistory
 void resetHistoryReturns(TStatechart* t);
-
+#endif
 
 #endif	

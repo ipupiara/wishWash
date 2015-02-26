@@ -215,7 +215,6 @@ xStateType xaStates[eNumberOfStates] = {
  		eStateIdle,    // default substate
  		0,    // keep history
  		evWishWashChecker,    // event checking fu
-		tfNull,       // def state entry function
  		tfNull,     //    entering state
  		tfNull},     // exiting state
 
@@ -224,7 +223,6 @@ xStateType xaStates[eNumberOfStates] = {
  		-1,
  		0,
  		evIdleChecker,
- 		tfNull,
  		entryIdleState,
  		tfNull
 	},
@@ -233,7 +231,6 @@ xStateType xaStates[eNumberOfStates] = {
  		-1,
  		0,
  		evTangoPressedChecker,
- 		tfNull,
  		entryTangoPressedState,
  		tfNull
 	},
@@ -242,7 +239,6 @@ xStateType xaStates[eNumberOfStates] = {
  		-1,
  		0,		 							
  		evTangoReleasedChecker,
- 		tfNull,
  		entryTangoReleasedState,
  		tfNull
 	}, 	 
@@ -251,7 +247,6 @@ xStateType xaStates[eNumberOfStates] = {
 		-1,
 		0,
 		evIndiaOnChecker,
-		tfNull,
 		entryIndiaOnState,
 		exitIndiaOnState
 	} 

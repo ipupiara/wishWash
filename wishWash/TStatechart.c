@@ -70,6 +70,7 @@ void generateAncestries(TStatechart* t)
 }
 
 
+#ifdef needHistory
 
 void resetHistoryReturns(TStatechart* t)
 {
@@ -84,19 +85,12 @@ void resetHistoryReturns(TStatechart* t)
 	
 }
 
-
+#endif
 
   
 void setInitialState(TStatechart* t, uStInt u32InitialState)
 {
 	stInt	i32ChildToEnter;
-	if (0 != t->m_pxaUserStateDefns[u32InitialState].m_pfDefaultStateEntry)
-	{
-		t->m_pxaUserStateDefns[u32InitialState].m_pfDefaultStateEntry();
-//		xStateType xs;
-//		xs = t->m_pxaUserStateDefns[u32InitialState];
-//		xs.m_pfDefaultStateEntry();
-	}
 
 	if (0 != t->m_pxaUserStateDefns[u32InitialState].m_pfEnteringState)
 	{
@@ -114,13 +108,7 @@ void setInitialState(TStatechart* t, uStInt u32InitialState)
 	while (-1 != i32ChildToEnter)
 	{
 //		xStateType xs;
-		if (0 != t->m_pxaUserStateDefns[i32ChildToEnter].
-			m_pfDefaultStateEntry)
-		{
-			t->m_pxaUserStateDefns[i32ChildToEnter].m_pfDefaultStateEntry();
-//			xs = t->m_pxaUserStateDefns[i32ChildToEnter];
-//			xs.m_pfDefaultStateEntry();
-		} 
+
 		if (0 != t->m_pxaUserStateDefns[i32ChildToEnter].m_pfEnteringState)
 		{
 			t->m_pxaUserStateDefns[i32ChildToEnter].m_pfEnteringState();
@@ -155,7 +143,11 @@ void createTStatechart(TStatechart* t, xStateType* const xaStates,
 	t->m_xaStateData = malloc (t->m_u32NumStates * sizeof(xInternalState));
 //	verifyStateNames(t);  // dont use this line
 	generateAncestries(t);
+	
+#ifdef needHistory
 	resetHistoryReturns(t);
+#endif
+	
 	setInitialState(t,u32InitialState);
 
 	t->m_i32ExitingStatesIndex = -1;
@@ -356,13 +348,16 @@ void beginEventAction(TStatechart* t, uStInt u32DestState,
 
 		}
 		*u32LastStateExited = u32StateBeingLeft;
-
+		
+#ifdef needHistory
 		if (t->m_pxaUserStateDefns[t->m_pxaUserStateDefns[u32StateBeingLeft].m_i32ParentStateName].m_keepHistory)
 		{
 			t->m_xaStateData[t->m_pxaUserStateDefns[u32StateBeingLeft].
 				m_i32ParentStateName].m_stIntHistoryReturnState =
 				u32StateBeingLeft;
 		}
+#endif
+
 	}
 
 	u32StateBeingLeft = t->m_pxaUserStateDefns[u32StateBeingLeft].m_i32ParentStateName;
@@ -383,12 +378,15 @@ void beginEventAction(TStatechart* t, uStInt u32DestState,
 		u32StateBeingLeft =
 			t->m_pxaUserStateDefns[u32StateBeingLeft].m_i32ParentStateName;
 
+#ifdef needHistory
 		if (t->m_pxaUserStateDefns[t->m_pxaUserStateDefns[u32StateBeingLeft].m_i32ParentStateName].m_keepHistory)
 		{
 			t->m_xaStateData[t->m_pxaUserStateDefns[u32StateBeingLeft].
 				m_i32ParentStateName].m_stIntHistoryReturnState =
 				u32StateBeingLeft;
 		}
+#endif
+
 	}
 
 	// Now, cover one last case:  the case where the dest state _is_
@@ -404,12 +402,15 @@ void beginEventAction(TStatechart* t, uStInt u32DestState,
 		}
 		t->u32LastStateExited = u32StateBeingLeft;
 
+#ifdef needHistory
 		if (t->m_pxaUserStateDefns[t->m_pxaUserStateDefns[u32StateBeingLeft].m_i32ParentStateName].m_keepHistory)
 		{
 			t->m_xaStateData[t->m_pxaUserStateDefns[u32StateBeingLeft].
 				m_i32ParentStateName].m_stIntHistoryReturnState =
 				u32StateBeingLeft;
 		}
+#endif
+
 	}
 	
 	return;
@@ -460,13 +461,22 @@ uStInt enterDestinationState(TStatechart* t,
 	while (ue <= t->m_xaStateData[u32NewState].m_vi32AncestrySize - 1);
 
 	u32StateTransitionallyIn = u32NewState;
-	while ((-1 != t->m_xaStateData[u32StateTransitionallyIn].
-			m_stIntHistoryReturnState) ||
+	while (
+	
+#ifdef needHistory
+			(-1 != t->m_xaStateData[u32StateTransitionallyIn].
+					m_stIntHistoryReturnState) ||
+#endif
+
 		(-1 != t->m_pxaUserStateDefns[u32StateTransitionallyIn].m_i32DefaultChildToEnter) )
 	{
+		
+#ifdef needHistory
 		if (-1 != t->m_xaStateData[u32StateTransitionallyIn].m_stIntHistoryReturnState)
 			u32StateTransitionallyIn =	 t->m_xaStateData[u32StateTransitionallyIn].m_stIntHistoryReturnState;
 		else
+#endif 
+
 			u32StateTransitionallyIn=t->m_pxaUserStateDefns[u32StateTransitionallyIn].m_i32DefaultChildToEnter;
 		if (0 != t->m_pxaUserStateDefns[u32StateTransitionallyIn].
 			m_pfEnteringState)

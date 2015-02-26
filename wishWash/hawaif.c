@@ -76,6 +76,11 @@ ISR(PCINT0_vect)
 ISR(ADC_vect)
 {
 	lastADCVal = ADC;
+	if (lastADCVal < 0x200) {
+		ticksNeeded = (lastADCVal >> 4);
+	} else {
+		ticksNeeded = (0x1FF >> 4) + ((lastADCVal - 0x1FF) >> 3);
+	}
 	ticksNeeded = (lastADCVal >> 3);     // division by 8 means factor = 0.12 
 //	if (lastADCVal < 0X0300) {
 //		ticksNeeded = (uint16_t) (FACTORLOW * lastADCVal);
