@@ -17,6 +17,8 @@ int8_t	 tangoReleasedEvent;
 int8_t   evMotorOutput53sSwitchedHighEvent;
 int8_t   evMotorOuput53sSwitchedLowEvent ;
 
+#define testMethods   //used for simulation of wishermotor with a second AtTiny85 on breadboard
+
 
 void switchRelayToPlusLine15();
 
@@ -25,6 +27,14 @@ void switchRelay53ToMoterOutput();
 void startADCPolling();
 
 void stopADCPolling();
+
+#ifdef testMethods
+
+	void setTimerIntervalSecs(int8_t secs);
+
+	void stopTimerIntervalSecs();
+
+#endif
 
 void startIntervalTimer();
 void stopIntervalTimer();
@@ -35,8 +45,5 @@ int isIndiaLineOn();
 void initHW();
 
 void enterIdleSleepMode();
-
-
-
 
 #endif /* HAWAIF_H_ */

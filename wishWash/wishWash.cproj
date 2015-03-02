@@ -16,7 +16,7 @@
     <Name>wishWash</Name>
     <RootNamespace>wishWash</RootNamespace>
     <ToolchainFlavour>Native</ToolchainFlavour>
-    <KeepTimersRunning>true</KeepTimersRunning>
+    <KeepTimersRunning>false</KeepTimersRunning>
     <OverrideVtor>false</OverrideVtor>
     <CacheFlash>true</CacheFlash>
     <ProgFlashFromRam>true</ProgFlashFromRam>
@@ -44,7 +44,7 @@
         <InterfaceProperties>
           <IspClock>125000</IspClock>
           <HvspClock>2000</HvspClock>
-          <DebugWireClockDiv>2000</DebugWireClockDiv>
+          <DebugWireClockDiv>0</DebugWireClockDiv>
         </InterfaceProperties>
         <InterfaceName>debugWIRE</InterfaceName>
       </ToolOptions>
@@ -52,8 +52,7 @@
       <ToolNumber>00A200017853</ToolNumber>
       <ToolName>AVR Dragon</ToolName>
     </com_atmel_avrdbg_tool_avrdragon>
-    <avrtoolinterface>
-    </avrtoolinterface>
+    <avrtoolinterface>debugWIRE</avrtoolinterface>
     <com_atmel_avrdbg_tool_stk500>
       <ToolOptions>
         <InterfaceProperties>

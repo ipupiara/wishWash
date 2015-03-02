@@ -20,6 +20,16 @@ int8_t wishCounter;
 CWishWashEvent* getNextEvent(CWishWashEvent* pev)
 {
 	CWishWashEvent* res = NULL;
+	if (tangoPressedEvent ==  1) {
+		tangoPressedEvent = 0;
+		pev->evType = evTangoPressed;
+		res = pev;
+	}
+	if (tangoReleasedEvent ==  1) {
+		tangoReleasedEvent = 0;
+		pev->evType = evTangoReleased;
+		res = pev;
+	}
 	if (timerReachedEvent ==  1) {
 		timerReachedEvent = 0;
 		pev->evType = evTimerExpired;
@@ -33,16 +43,6 @@ CWishWashEvent* getNextEvent(CWishWashEvent* pev)
 	if (indaLineOffEvent ==  1) {
 		indaLineOffEvent = 0;
 		pev->evType = evIndiaSwitchedOff;
-		res = pev;
-	}
-	if (tangoPressedEvent ==  1) {
-		tangoPressedEvent = 0;
-		pev->evType = evTangoPressed;
-		res = pev;
-	}
-	if (tangoReleasedEvent ==  1) {
-		tangoReleasedEvent = 0;
-		pev->evType = evTangoReleased;
 		res = pev;
 	}
 	if (evMotorOutput53sSwitchedHighEvent ==  1) {
