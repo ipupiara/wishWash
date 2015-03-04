@@ -50,11 +50,28 @@ enum motorRelaySimulatorEvents
 
 int8_t currentState= Idlde_WaitForPlus;
 
+
+
+void switchOutputHigh()
+{
+	switchRelayToPlusLine15();
+}
+
+void switchOutputLow()
+{
+	switchRelay53ToMoterOutput();
+}
+
+int8_t isInputHigh()
+{
+	return isTangoLineOn();
+}
+
 int8_t nextEvent()
 {
 	int8_t res = 0;
 	if (currentState== Idlde_WaitForPlus)  {
-		if (isTangoLineOn()) {
+		if (isInputHigh()) {
 			res = MotorSwitchedToPlus;
 		}
 	}
@@ -81,20 +98,20 @@ int main(void)
 					startIntervalTimer(1);
 				}
 			}
-		}
-		if (evt == TimerReached)  {
-			if (currentState == WaitForGoUpTimer )  {
-				currentState = WaitForGoDownTimer;
-				startIntervalTimer(2);
-				// switch line high
-			}
-			if (currentState == WaitForGoDownTimer) {
-				currentState = Idlde_WaitForPlus;
-				// switch line down
-			}
-		}
-
-	}
+		
+			if (evt == TimerReached)  {
+				if (currentState == WaitForGoUpTimer )  {
+					currentState = WaitForGoDownTimer;
+					startIntervalTimer(2);
+					switchOutputHigh();
+				}
+				if (currentState == WaitForGoDownTimer) {
+					currentState = Idlde_WaitForPlus;
+					switchOutputLow();
+				}
+			}  // TimerReached 
+		}   // if evt != 0
+	}   // while 
 }
 
 
