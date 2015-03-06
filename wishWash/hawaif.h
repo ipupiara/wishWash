@@ -17,8 +17,13 @@ int8_t	 tangoReleasedEvent;
 int8_t   evMotorOutput53sSwitchedHighEvent;
 int8_t   evMotorOuput53sSwitchedLowEvent ;
 
-#define testMethods   //used for simulation of wishermotor with a second AtTiny85 on breadboard
+//#define testMethods   //used for simulation of wishermotor with a second AtTiny85 on breadboard
 
+char * wwState;
+
+int16_t  stateEntryCnt;
+
+void setState(char* sta);
 
 void switchRelayToPlusLine15();
 

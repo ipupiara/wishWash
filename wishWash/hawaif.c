@@ -33,6 +33,14 @@ int8_t  lastPinB;
 int8_t timerStarted;
 
 
+
+void setState(char* sta)
+{
+	wwState = sta;
+	++stateEntryCnt; 
+}
+
+
 void switchRelay53ToMoterOutput()
 {
 	PORTB &=  ~(1<< RELAYSWITCH);
@@ -77,6 +85,7 @@ ISR(PCINT0_vect)
 
 
 ISR(ADC_vect)
+
 {
 	lastADCVal = ADC;
 	if (lastADCVal < 0x200) {
@@ -124,7 +133,7 @@ void startADCPolling()
 	lastADCVal = -1;
 
 	ADMUX = (1<<REFS0) | (1<<REFS1) | (1 << MUX0) | (1 << MUX1) ; //  VCC as ref.voltage, right adjust, ADC3 input (PB3)
-	DIDR0 = (1<<ADC3D);  // disable digital input
+//	DIDR0 = (1<<ADC3D);  // disable digital input
 
 	ADCSRA  = (1<<ADEN) | (1<<ADIE) | (1<<ADPS1) | (1<<ADPS2);  // | (1<<ADPS0)  now 64 prescaler wihout ps0 approx 125 kHz
 	// ena adc, set single conversion mode, int enable
@@ -196,6 +205,8 @@ void enterIdleSleepMode()
 
 void initHW()
 {
+	stateEntryCnt = 0;
+	
 	cli();
 	timerStarted = 0;
 	timerReachedEvent = 0;

@@ -73,6 +73,7 @@ void entryIdleState(void)
 	} else if (isIndiaLineOn()) {
 		indiaLineOnEvent = 1;		
 	}
+	setState("idl");
 }
 
 uStInt evIdleChecker(void)
@@ -107,6 +108,7 @@ uStInt evIdleChecker(void)
 void entryTangoPressedState(void)
 {
 	switchRelayToPlusLine15();
+	setState("tnP");
 }
 
 uStInt evTangoPressedChecker(void)
@@ -127,6 +129,7 @@ uStInt evTangoPressedChecker(void)
 void entryTangoReleasedState(void)
 {
 	wishCounter = 0;
+	setState("tnR");
 }
 
 uStInt evTangoReleasedChecker(void)
@@ -154,6 +157,7 @@ void entryIndiaOnState(void)
 	startADCPolling();
 	switchRelayToPlusLine15();
 	stopIntervalTimer();
+	setState("ind");
 }
 
 void exitIndiaOnState(void)
