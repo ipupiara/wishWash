@@ -36,7 +36,7 @@ int8_t timerStarted;
 
 void setState(char* sta)
 {
-	wwState = sta;
+	wwState = (stateString *) sta;
 	++stateEntryCnt; 
 }
 

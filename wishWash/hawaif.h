@@ -19,7 +19,9 @@ int8_t   evMotorOuput53sSwitchedLowEvent ;
 
 //#define testMethods   //used for simulation of wishermotor with a second AtTiny85 on breadboard
 
-char * wwState;
+typedef char stateString [3];
+
+stateString * wwState;
 
 int16_t  stateEntryCnt;
 
