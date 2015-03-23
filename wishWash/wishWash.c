@@ -95,16 +95,16 @@ int main(void)
 			if (currentState == Idlde_WaitForPlus) {
 				if (evt == MotorSwitchedToPlus) {
 					currentState = WaitForGoUpTimer;
-					startIntervalTimer(1);
+					startTimerIntervalSecs(2);
 				}
 			}
 		
 			if (evt == TimerReached)  {
 				if (currentState == WaitForGoUpTimer )  {
 					currentState = WaitForGoDownTimer;
-					startIntervalTimer(2);
+					startTimerIntervalSecs(4);
 					switchOutputHigh();
-				}
+				} else
 				if (currentState == WaitForGoDownTimer) {
 					currentState = Idlde_WaitForPlus;
 					switchOutputLow();

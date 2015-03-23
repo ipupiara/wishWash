@@ -17,7 +17,7 @@ int8_t	 tangoReleasedEvent;
 int8_t   evMotorOutput53sSwitchedHighEvent;
 int8_t   evMotorOuput53sSwitchedLowEvent ;
 
-//#define testMethods   //used for simulation of wishermotor with a second AtTiny85 on breadboard
+#define testMethods   //used for simulation of wishermotor with a second AtTiny85 on breadboard
 
 typedef char stateString [3];
 
@@ -37,7 +37,7 @@ void stopADCPolling();
 
 #ifdef testMethods
 
-	void setTimerIntervalSecs(int8_t secs);
+	void startTimerIntervalSecs(int8_t secs);
 
 	void stopTimerIntervalSecs();
 
