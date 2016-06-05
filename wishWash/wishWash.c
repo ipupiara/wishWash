@@ -91,7 +91,7 @@ int main(void)
 	while(1)
 	{
 		evt = nextEvent();
-		if (evt != 0) {
+ 		if (evt != 0) {
 			if (currentState == Idlde_WaitForPlus) {
 				if (evt == MotorSwitchedToPlus) {
 					currentState = WaitForGoUpTimer;
